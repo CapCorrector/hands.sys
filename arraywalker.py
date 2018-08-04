@@ -29,9 +29,6 @@ class ArrayWalker:
             self.path.append(biggest)
         return result
 
-    def walk(self):
-        pass
-
 if __name__ == '__main__':
     aw = ArrayWalker()
     aw.read('/Users/Corrector/Documents/Личное/США/UCSC/Python/Oleg/array.txt')
