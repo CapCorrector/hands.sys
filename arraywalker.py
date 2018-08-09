@@ -1,40 +1,42 @@
 class ArrayWalker:
-    arr = []
-    current = (0,0)
-    path = []
+    def __init__(self):
+        self.arr = []
+        self.current = (0,0)
+        self.path = []
     def read(self, filename):
         with open(filename) as f:
             for line in f:
                 self.arr.append(list(map(lambda a: int(a), line.strip().split(';'))))
-            f.close()
         self.curbig = self.arr[0][0]
 
-    def nextstep(self, coordinates, biggest):
-        if coordinates[0] != 0 and biggest < self.arr[coordinates[0]][coordinates[1]-1]:
-            biggest = self.arr[coordinates[0]-1][coordinates[1]]
-            result = (coordinates[0]-1,coordinates[1])
-        if coordinates[1] != 0 and biggest < self.arr[coordinates[0]-1][coordinates[1]]:
-            biggest = self.arr[coordinates[0]][coordinates[1]-1]
-            result = (coordinates[0],coordinates[1]-1)
-        if coordinates[0] < len(self.arr)-1 and biggest < self.arr[coordinates[0]+1][coordinates[1]]:
-            biggest = self.arr[coordinates[0]+1][coordinates[1]]
-            result = (coordinates[0]+1,coordinates[1])
-        if coordinates[1] < len(self.arr[0])-1 and biggest < self.arr[coordinates[0]][coordinates[1]+1]:
-            biggest = self.arr[coordinates[0]][coordinates[1]+1]
-            result = (coordinates[0],coordinates[1]+1)
-        if biggest <= self.curbig:
+    def nextstep(self):
+        poss_moves = []
+        self.arr[self.current[0]][self.current[1]] = False
+        if self.current[0] != 0 and self.arr[self.current[0]-1][self.current[1]]:
+            poss_moves.append([self.arr[self.current[0]-1][self.current[1]], (-1,0)])
+        if self.current[1] != 0 and self.arr[self.current[0]][self.current[1]-1]:
+            poss_moves.append([self.arr[self.current[0]][self.current[1]-1], (0,-1)])
+        if self.current[0] < len(self.arr)-1 and self.arr[self.current[0]+1][self.current[1]]:
+            poss_moves.append([self.arr[self.current[0]+1][self.current[1]], (1,0)])
+        if self.current[1] < len(self.arr[0])-1 and self.arr[self.current[0]][self.current[1]+1]:
+            poss_moves.append([self.arr[self.current[0]][self.current[1]+1], (0,1)])
+        poss_moves.sort(reverse=True)
+        if poss_moves == [] or (len(poss_moves) > 1 and poss_moves[0][0] == poss_moves[1][0]):
             result = False
         else:
-            self.curbig = biggest
-            self.path.append(biggest)
+            deltax = poss_moves[0][1][1]
+            deltay = poss_moves[0][1][0]
+            self.path.append(self.arr[self.current[0]+deltay][self.current[1]+deltax])
+            result = [self.current[0]+deltay,self.current[1]+deltax]
         return result
 
 if __name__ == '__main__':
     aw = ArrayWalker()
     aw.read('/Users/Corrector/Documents/Личное/США/UCSC/Python/Oleg/array.txt')
     print(aw.arr)
-    aw.current = aw.nextstep(aw.current, aw.curbig)
+    aw.current = aw.nextstep()
     while aw.current:
-        aw.current = aw.nextstep(aw.current, aw.curbig)
+        aw.current = aw.nextstep()
     print(aw.path)
+    print(aw.arr)
     
